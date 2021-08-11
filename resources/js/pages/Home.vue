@@ -30,16 +30,6 @@ export default {
       mapOptions,
     }
   },
-  // created() {
-  //   this.items.push({
-  //     lat: 5.405497,
-  //     lng: -3.390339
-  //   });
-  //   this.items.push({
-  //     lat: 5.385992,
-  //     lng: -3.991032
-  //   });
-  // },
   setup() {
     const getAllDistributorsUsecase = inject(DISTRUBTORS_USECASE_FACTORY);
     const distributors = ref([]);
@@ -85,6 +75,18 @@ export default {
       })
     }
 
+    const animFocusedMarker = (d) => {
+      options.value = options.value.map(item => {
+        if (item.options.position.lat == d.latitude && item.options.position.lng == d.longitude) {
+          item.options.animation = 1;
+        } else {
+          item.options.animation = 0;
+        }
+
+        return item;
+      })
+    }
+
     const handleMarkerClick = (e) => {
       console.log(e)
     }
@@ -96,6 +98,8 @@ export default {
       };
       map.setZoom(17);
       map.panTo(markerPosition);
+
+      animFocusedMarker(distributor);
     }
 
     
@@ -109,13 +113,13 @@ export default {
     }
 
     const handleDistrToTop = (d) => {
-      let markerPosition = {
-        lat: d.latitude,
-        lng: d.longitude,
-      };
+      // let markerPosition = {
+      //   lat: d.latitude,
+      //   lng: d.longitude,
+      // };
 
-      map.setZoom(12)
-      map.setCenter(markerPosition)
+      // map.setZoom(12)
+      // map.setCenter(markerPosition)
     }
 
     return {

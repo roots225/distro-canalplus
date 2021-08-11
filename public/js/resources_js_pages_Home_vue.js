@@ -85,16 +85,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       mapOptions: _helpers__WEBPACK_IMPORTED_MODULE_3__.mapOptions
     };
   },
-  // created() {
-  //   this.items.push({
-  //     lat: 5.405497,
-  //     lng: -3.390339
-  //   });
-  //   this.items.push({
-  //     lat: 5.385992,
-  //     lng: -3.991032
-  //   });
-  // },
   setup: function setup() {
     var getAllDistributorsUsecase = (0,vue__WEBPACK_IMPORTED_MODULE_4__.inject)(_core_constants__WEBPACK_IMPORTED_MODULE_5__.DISTRUBTORS_USECASE_FACTORY);
     var distributors = (0,vue__WEBPACK_IMPORTED_MODULE_4__.ref)([]);
@@ -157,6 +147,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     };
 
+    var animFocusedMarker = function animFocusedMarker(d) {
+      options.value = options.value.map(function (item) {
+        if (item.options.position.lat == d.latitude && item.options.position.lng == d.longitude) {
+          item.options.animation = 1;
+        } else {
+          item.options.animation = 0;
+        }
+
+        return item;
+      });
+    };
+
     var handleMarkerClick = function handleMarkerClick(e) {
       console.log(e);
     };
@@ -168,6 +170,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
       map.setZoom(17);
       map.panTo(markerPosition);
+      animFocusedMarker(distributor);
     };
 
     var handleMapInstance = function handleMapInstance(mp) {
@@ -178,13 +181,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       console.log(e);
     };
 
-    var handleDistrToTop = function handleDistrToTop(d) {
-      var markerPosition = {
-        lat: d.latitude,
-        lng: d.longitude
-      };
-      map.setZoom(12);
-      map.setCenter(markerPosition);
+    var handleDistrToTop = function handleDistrToTop(d) {// let markerPosition = {
+      //   lat: d.latitude,
+      //   lng: d.longitude,
+      // };
+      // map.setZoom(12)
+      // map.setCenter(markerPosition)
     };
 
     return {
@@ -553,8 +555,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 var mapOptions = {
   center: {
-    lat: 5,
-    lng: -3
+    lat: 5.3484461,
+    lng: -4.0497058
   },
   zoom: 12,
   fullscreenControl: false,
