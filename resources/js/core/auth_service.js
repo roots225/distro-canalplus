@@ -16,7 +16,7 @@ export class AuthService {
 
   static login(user, token) {
     this.setToken(token, user);
-    router.push({name: 'home'});
+    router.push({name: 'distributors'});
   }
 
   static logOut() {

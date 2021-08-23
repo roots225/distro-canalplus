@@ -19,8 +19,8 @@
           </div>
 
           <div class="flex justify-center">
-            <button class="m-5 py-2 px-10 text-white rounded-xl bg-pink-600 hover:bg-pink-400 flex justify-between" @click.prevent="doLogin">
-              <i data-feather="loader" v-show="loading"></i>
+            <button class="m-5 py-2 px-10 text-white rounded-xl bg-pink-600 hover:bg-pink-400 flex justify-between" @click.prevent="doLogin" :disabled="loading">
+              <i class="block mt-1 mr-1 fa fa-spin fa-spinner" v-if="loading"></i>
               <span :class="{'pl-5': loading}">Connexion</span>
             </button>
           </div>
@@ -32,53 +32,29 @@
 
 <script>
 import { SIGN_IN_USECASE_FACTORY } from '../core/constants'
-import feather from 'feather-icons';
 import { ref, inject }  from 'vue'
 
 export default {
-  data () {
-    return {
-      loading: false,
-    }
-  },
   setup() {
 
     const formData = ref({
       email: 'admin@admin.com',
       password: 'password'
-    })
+    });
+
+    const loading = ref(false);
 
     const login = inject(SIGN_IN_USECASE_FACTORY);
     const doLogin = async () => {
+      loading.value = true;
       const response = await login.execute(formData.value);
       console.log(response)
     }
     return {
       formData,
+      loading,
       doLogin
     }
-  },
-  mounted () {
-    feather.replace();
-  },
-  methods: {
-    // login () {
-    //   this.loading = true;
-    //   window.axios.get('/sanctum/csrf-cookie').then(async (response) => {
-
-    //     try {
-    //       const res = await window.axios.post('api/v1/login', this.form);
-    //       window.localStorage.setItem('token', res.data.data.token)
-    //       window.localStorage.setItem('user', JSON.stringify(res.data.data.user))
-    //       this.loading = false;
-    //       this.$router.push({name: 'home'});
-    //     } catch (e) {
-    //       console.log(e)
-    //       alert('Identifiant incorrects');
-    //     }
-
-    //   });
-    // }
   }
 }
 </script>

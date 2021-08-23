@@ -11,7 +11,20 @@ class ImporterController extends BaseController
 {
     public function index() {
         Distributor::truncate();
-        
+
+        $savedNumber = $this->firstFormatImporter();
+
+        return $this->successResponse([
+            'success' => true,
+            'distr_number' => $savedNumber
+        ]);
+    }
+
+    public function stringToFloat($value):float {
+        return floatval(str_replace(',', '.', trim($value)));
+    }
+
+    public function firstFormatImporter() {
         $file = public_path('COORDONNEES_GPS.csv');
         $content = File::get($file);
         $content = explode(PHP_EOL, $content);
@@ -45,13 +58,45 @@ class ImporterController extends BaseController
             }
         }
 
-        return $this->successResponse([
-            'success' => true,
-            'distr_number' => $savedNumber
-        ]);
+        return $savedNumber;
     }
 
-    public function stringToFloat($value):float {
-        return floatval(str_replace(',', '.', trim($value)));
+    public function newFormatImporter() {
+        $file = public_path('COORDONNEES_GPS_NEW.csv');
+        $content = File::get($file);
+        $content = explode(PHP_EOL, $content);
+
+        $savedNumber = 0;
+        foreach($content as $key => $line) {
+            if ($key != 0) {
+                if ($line) {
+                    $lineAsArray = explode(';', trim(utf8_encode($line)));
+                    
+                    [
+                        $dist_num,
+                        $pdv_name,
+                        $zone,
+                        $latlng,
+                        $localisation,
+                    ] = $lineAsArray;
+
+                    if ($latlng) {
+                        [$latitude, $longitude] = explode(',', trim($latlng));
+
+                        $distributor = new Distributor();
+                        $distributor->distributor_number = trim($dist_num);
+                        $distributor->name = trim($pdv_name);
+                        $distributor->localisation = trim($localisation);
+                        $distributor->zone = trim($zone);
+                        $distributor->latitude = $this->stringToFloat($latitude);
+                        $distributor->longitude = $this->stringToFloat($longitude);
+                        $distributor->save();
+                        $savedNumber++;
+                    }
+                }
+            }
+        }
+
+        return $savedNumber;
     }
 }

@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+button:disabled {
+  cursor: default;
+  background-color: lightgray;
+}
+
+@import './fontawesome/css/all.css';
+@import './mapbox.css';

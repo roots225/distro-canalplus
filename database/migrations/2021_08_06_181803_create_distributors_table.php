@@ -17,8 +17,9 @@ class CreateDistributorsTable extends Migration
             $table->id();
             $table->string('distributor_number');
             $table->string('name');
-            $table->string('localisation');
-            $table->string('city');
+            $table->string('zone')->nullable();
+            $table->string('localisation')->nullable();
+            $table->string('city')->nullable();
             $table->integer('latitude');
             $table->integer('longitude');
             $table->timestamps();
