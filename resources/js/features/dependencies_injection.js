@@ -2,7 +2,8 @@ import { provide, inject } from 'vue'
 import { 
   DISTRUBTORS_USECASE_FACTORY, 
   SIGN_IN_USECASE_FACTORY, 
-  IMPORT_DISTRUBTORS_USECASE_FACTORY
+  IMPORT_DISTRUBTORS_USECASE_FACTORY,
+  UPDATE_DISTRIBUTOR_USECASE
 } from '../core/constants'
 
 import router from '../router'
@@ -12,7 +13,7 @@ import { NetworkService } from '../core/network_service'
 import GetDistributorsUsecase from './distributors/domain/usecases/get_distributors_usecase'
 import ImportDistributorsFromFile from './distributors/domain/usecases/import_distributors_from_file_usecase'
 import LoginUsecase from './sign_in/domain/usecases/login_usecase'
-
+import UpdateDistributorsUsecase from './distributors/domain/usecases/update_distributor_usecase'
 
 // import repositories
 import DistributorRepository from './distributors/data/repositories/distributor_repository'
@@ -45,8 +46,10 @@ export const dependencies = (app) => {
     const getDistributorsUseCase = new GetDistributorsUsecase(distributorRepository)
     const importDistributorsFromFile = new ImportDistributorsFromFile(distributorRepository);
     const loginUsecase = new LoginUsecase(signInRepository);
+    const updateDistributor = new UpdateDistributorsUsecase(distributorRepository);
 
     app.provide(DISTRUBTORS_USECASE_FACTORY, getDistributorsUseCase)
     app.provide(IMPORT_DISTRUBTORS_USECASE_FACTORY, importDistributorsFromFile)
     app.provide(SIGN_IN_USECASE_FACTORY, loginUsecase)
+    app.provide(UPDATE_DISTRIBUTOR_USECASE, updateDistributor)
 }

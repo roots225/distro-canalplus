@@ -35,11 +35,17 @@ __webpack_require__.r(__webpack_exports__);
       emit('zoomInMarker', distributor);
     };
 
+    var update = function update(distributor) {
+      emit('update', distributor);
+      console.log(distributor);
+    };
+
     return {
       showTop: showTop,
       removeTop: removeTop,
       zoomInMarker: zoomInMarker,
-      toTop: toTop
+      toTop: toTop,
+      update: update
     };
   }
 });
@@ -77,12 +83,34 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   components: {
     'distributor': _components_Distributor_vue__WEBPACK_IMPORTED_MODULE_1__.default
   },
+  data: function data() {
+    return {// singleDistributor: null,
+      // form:{
+      //   distributor_number: 'ok',
+      //   name: '',
+      //   localisation: '',
+      //   latitude: '',
+      //   longitude: '',
+      // }
+    };
+  },
   setup: function setup() {
+    var _this = this;
+
     var getAllDistributorsUsecase = (0,vue__WEBPACK_IMPORTED_MODULE_2__.inject)(_core_constants__WEBPACK_IMPORTED_MODULE_3__.DISTRUBTORS_USECASE_FACTORY);
+    var updateDistributorUsecase = (0,vue__WEBPACK_IMPORTED_MODULE_2__.inject)(_core_constants__WEBPACK_IMPORTED_MODULE_3__.UPDATE_DISTRIBUTOR_USECASE);
     var distributors = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)([]);
     var items = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)([]);
     var mapContainer = (0,vue__WEBPACK_IMPORTED_MODULE_2__.ref)(null);
     var map = new _core_map_box_js__WEBPACK_IMPORTED_MODULE_4__.MapBox();
+    var singleDistributor = '';
+    var form = (0,vue__WEBPACK_IMPORTED_MODULE_2__.reactive)({
+      distributor_number: '',
+      name: '',
+      localisation: '',
+      latitude: '',
+      longitude: ''
+    });
     (0,vue__WEBPACK_IMPORTED_MODULE_2__.onMounted)( /*#__PURE__*/_asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().mark(function _callee() {
       var arrayBounds;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default().wrap(function _callee$(_context) {
@@ -120,11 +148,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       map.zoomOnPoint(lngLat.lat, lngLat.lng);
     };
 
+    var updateDistributor = function updateDistributor(distributor) {
+      console.log(distributor);
+      singleDistributor = distributor;
+      form.distributor_number = distributor.distributorNumber;
+      form.name = distributor.name;
+      form.localisation = distributor.localisation;
+      form.latitude = distributor.latitude;
+      form.longitude = distributor.longitude;
+      document.querySelector('.modal').classList.remove('hidden');
+      document.querySelector('.overlay').classList.remove('hidden');
+    };
+
+    var OpenModal = function OpenModal() {
+      _this.$refs.modal.classList.remove('hidden');
+
+      _this.$refs.overlay.classList.remove('hidden');
+    };
+
+    var closeModal = function closeModal() {
+      document.querySelector('.modal').classList.add('hidden');
+      document.querySelector('.overlay').classList.add('hidden'); // this.$refs.modal.classList.add('hidden')
+      // this.$refs.overlay.classList.add('hidden')
+    };
+
+    var submit = function submit(id) {
+      updateDistributorUsecase.execute(singleDistributor.id, form);
+    };
+
     return {
+      form: form,
+      singleDistributor: singleDistributor,
       mapContainer: mapContainer,
       distributors: distributors,
       handleDistributorClick: handleDistributorClick,
-      items: items
+      items: items,
+      updateDistributor: updateDistributor,
+      OpenModal: OpenModal,
+      closeModal: closeModal
     };
   }
 });
@@ -175,13 +236,13 @@ var _hoisted_9 = {
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
     "class": "py-3 text-gray-500 border-b relative border-pink-500 cursor-pointer",
-    onMouseout: _cache[1] || (_cache[1] = function ($event) {
+    onMouseout: _cache[2] || (_cache[2] = function ($event) {
       return $setup.removeTop($props.distributor);
     }),
-    onMouseover: _cache[2] || (_cache[2] = function ($event) {
+    onMouseover: _cache[3] || (_cache[3] = function ($event) {
       return $setup.showTop($props.distributor);
     }),
-    onClick: _cache[3] || (_cache[3] = function ($event) {
+    onClick: _cache[4] || (_cache[4] = function ($event) {
       return $setup.zoomInMarker($props.distributor);
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h4", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.distributor.distributorNumber), 1
@@ -197,6 +258,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       'hidden': $setup.toTop !== $props.distributor.id
     }]
   }, " Cliquer pour zoomer ", 2
+  /* CLASS */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+    onClick: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
+      return $setup.update($props.distributor);
+    }, ["stop"])),
+    "class": ["py-1 px-8 rounded-2xl bg-gray-400 bg-opacity-25 text-black absolute top-2 right-10 invisible xl:visible", {
+      'hidden': $setup.toTop !== $props.distributor.id
+    }]
+  }, " Modifier ", 2
   /* CLASS */
   )], 32
   /* HYDRATE_EVENTS */
@@ -252,6 +322,85 @@ var _hoisted_9 = {
   ref: "mapContainer",
   "class": "fixed w-full xl:w-2/3 mapContainer"
 };
+var _hoisted_10 = {
+  ref: "modal",
+  "class": "modal hidden"
+};
+var _hoisted_11 = {
+  "class": "input-bloc"
+};
+var _hoisted_12 = {
+  "class": "flex flex-wrap -mx-3 mb-6"
+};
+var _hoisted_13 = {
+  "class": "w-full md:w-1/2 px-3 mb-6 md:mb-0"
+};
+
+var _hoisted_14 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+  "class": "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+  "for": "grid-first-name"
+}, " numero du distributeur ", -1
+/* HOISTED */
+);
+
+var _hoisted_15 = {
+  "class": "w-full md:w-1/2 px-3"
+};
+
+var _hoisted_16 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+  "class": "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+  "for": "grid-last-name"
+}, " nom du distributeur ", -1
+/* HOISTED */
+);
+
+var _hoisted_17 = {
+  "class": "flex flex-wrap -mx-3 mb-6"
+};
+var _hoisted_18 = {
+  "class": "w-full px-3"
+};
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+  "class": "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+  "for": "grid-password"
+}, " localisation ", -1
+/* HOISTED */
+);
+
+var _hoisted_20 = {
+  "class": "flex flex-wrap -mx-3 mb-6"
+};
+var _hoisted_21 = {
+  "class": "w-full md:w-1/2 px-3 mb-6 md:mb-0"
+};
+
+var _hoisted_22 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+  "class": "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+  "for": "grid-first-name"
+}, " latitude ", -1
+/* HOISTED */
+);
+
+var _hoisted_23 = {
+  "class": "w-full md:w-1/2 px-3"
+};
+
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("label", {
+  "class": "block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2",
+  "for": "grid-last-name"
+}, " longitude ", -1
+/* HOISTED */
+);
+
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+  "class": "w-full md:w-1/2 px-3"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+  "class": "bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded"
+}, " Enregistrer ")], -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_distributor = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("distributor");
 
@@ -261,15 +410,88 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_distributor, {
       key: item,
       distributor: item,
+      onUpdate: $setup.updateDistributor,
       onZoomInMarker: $setup.handleDistributorClick
     }, null, 8
     /* PROPS */
-    , ["distributor", "onZoomInMarker"]);
+    , ["distributor", "onUpdate", "onZoomInMarker"]);
   }), 128
   /* KEYED_FRAGMENT */
   ))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_9, null, 512
   /* NEED_PATCH */
-  )])]);
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("button", {
+    "class": "close-modal",
+    onClick: _cache[1] || (_cache[1] = function () {
+      return $setup.closeModal && $setup.closeModal.apply($setup, arguments);
+    })
+  }, "×"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <h1>Modifier utilisateur</h1> "), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("form", {
+    onSubmit: _cache[7] || (_cache[7] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function () {
+      return _ctx.submit && _ctx.submit.apply(_ctx, arguments);
+    }, ["prevent"])),
+    "class": "w-full max-w-lg"
+  }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
+      return $setup.form.distributor_number = $event;
+    }),
+    "class": "appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white",
+    id: "grid-first-name",
+    type: "text",
+    placeholder: "45879"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.distributor_number]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <p class=\"text-red-500 text-xs italic\">Please fill out this field.</p> ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_15, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
+      return $setup.form.name = $event;
+    }),
+    "class": "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500",
+    id: "grid-last-name",
+    type: "text",
+    placeholder: "company name"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.name]])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
+      return $setup.form.localisation = $event;
+    }),
+    "class": "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500",
+    id: "grid-password",
+    type: "text",
+    placeholder: "Plateau, Abidjan"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.localisation]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <p class=\"text-gray-600 text-xs italic\">Make it as long and as crazy as you'd like</p> ")])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_21, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
+      return $setup.form.latitude = $event;
+    }),
+    "class": "appearance-none block w-full bg-gray-200 text-gray-700 border border-red-500 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white",
+    id: "grid-first-name",
+    type: "text",
+    placeholder: "2.45879"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.latitude]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <p class=\"text-red-500 text-xs italic\">Please fill out this field.</p> ")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", _hoisted_23, [_hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("input", {
+    "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
+      return $setup.form.longitude = $event;
+    }),
+    "class": "appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500",
+    id: "grid-last-name",
+    type: "text",
+    placeholder: "4.5522"
+  }, null, 512
+  /* NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $setup.form.longitude]])]), _hoisted_25])], 32
+  /* HYDRATE_EVENTS */
+  )])], 512
+  /* NEED_PATCH */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+    ref: "overlay",
+    "class": "overlay hidden",
+    onClick: _cache[8] || (_cache[8] = function () {
+      return $setup.closeModal && $setup.closeModal.apply($setup, arguments);
+    })
+  }, null, 512
+  /* NEED_PATCH */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <button id=\"unique\">update</button> ")]);
 }
 
 /***/ }),
@@ -330,8 +552,8 @@ var MapBox = /*#__PURE__*/function () {
         doubleClickZoom: false,
         container: element,
         zoom: 13,
-        style: 'mapbox://styles/mapbox/streets-v11' // style: 'mapbox://styles/mapbox/navigation-day-v1'
-
+        // style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/mapbox/navigation-day-v1'
       });
       this.map.addControl(new mapboxgl.NavigationControl());
     }
@@ -359,7 +581,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.first-column {\r\n  height: calc(100vh - 55px);\n}\n.mapContainer {\r\n  height: calc(100vh - 50%);\r\n  bottom: 0;\r\n  z-index: 11\n}\n.half-container {\r\n  height: 50vh;\n}\n.gmaps-wrapper {\r\n  position: fixed;\r\n  height: calc(100vh - 50%);\r\n  width: 100%;\r\n  bottom: 0;\r\n  z-index: 11\n}\n@media screen and (min-width: 1280px) {\n.gmaps-wrapper {\r\n    position: fixed;\r\n    height: calc(100vh - 55px);\r\n    width: 67%;\r\n    /* top: 54px; */\r\n    bottom: 0;\n}\n.first-column {\r\n    height: auto;\n}\n.half-container {\r\n    height: 100vh;\n}\n.mapContainer {\r\n    height: calc(100vh - 74px);\n}\n}\n.gmaps-map {\r\n  height: 100%;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.first-column {\n  height: calc(100vh - 55px);\n}\n.mapContainer {\n  height: calc(100vh - 50%);\n  bottom: 0;\n  z-index: 11\n}\n.half-container {\n  height: 50vh;\n}\n.gmaps-wrapper {\n  position: fixed;\n  height: calc(100vh - 50%);\n  width: 100%;\n  bottom: 0;\n  z-index: 11\n}\n@media screen and (min-width: 1280px) {\n.gmaps-wrapper {\n    position: fixed;\n    height: calc(100vh - 55px);\n    width: 67%;\n    /* top: 54px; */\n    bottom: 0;\n}\n.first-column {\n    height: auto;\n}\n.half-container {\n    height: 100vh;\n}\n.mapContainer {\n    height: calc(100vh - 74px);\n}\n}\n.gmaps-map {\n  height: 100%;\n}\n.show-modal {\n  font-size: 2rem;\n  font-weight: 600;\n  padding: 1.75rem 3.5rem;\n  margin: 5rem 2rem;\n  border: none;\n  background-color: #fff;\n  color: #444;\n  border-radius: 10rem;\n  cursor: pointer;\n}\n.close-modal {\n  position: absolute;\n  top: 1rem;\n  right: 2rem;\n  font-size: 5rem;\n  color: #333;\n  cursor: pointer;\n  border: none;\n  background: none;\n}\n.hidden {\n  display: none;\n}\n.modal {\n  /* font-family: $primaryFont; */\n  position: fixed;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n  width: 50%;\n  background-color: white;\n  padding: 5rem;\n  border-radius: 5px;\n  box-shadow: 0 3rem 5rem rgba(0, 0, 0, 0.3);\n  z-index: 9999;\n}\n.overlay {\n  position: fixed;\n  top: 0;\n  left: 0;\n  bottom: 0;\n  right: 0;\n  width: 100%;\n  height: 130vh;\n  background-color: rgba(0, 0, 0, 0.6);\n  -webkit-backdrop-filter: blur(3px);\n          backdrop-filter: blur(3px);\n  z-index: 999;\n}\n\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

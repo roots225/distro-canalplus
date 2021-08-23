@@ -73,6 +73,7 @@ class DistributorController extends BaseController
     public function update(Request $request, Distributor $distributor)
     {
         //
+        dd($request);
     }
 
     /**

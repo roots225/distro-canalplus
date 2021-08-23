@@ -20,4 +20,16 @@ export default class DistributorRepository {
       return new ServerFailure(e.message);
     }
   }
+
+  async updateDistributor(id, form){
+
+    try{
+
+      return await this.dataSource.updateDistributor(id, form);
+
+    }catch(e){
+      return new ServerFailure(e.message)
+    }
+
+  }
 }

@@ -11,6 +11,10 @@
     <div class="py-1 px-8 rounded-2xl bg-pink-500 text-white absolute top-12 right-10 invisible xl:visible" :class="{'hidden': toTop !== distributor.id}">
       Cliquer pour zoomer
     </div>
+
+    <div @click.stop="update(distributor)" class="py-1 px-8 rounded-2xl bg-gray-400 bg-opacity-25 text-black absolute top-2 right-10 invisible xl:visible" :class="{'hidden': toTop !== distributor.id}">
+      Modifier
+    </div>
   </div>
 </template>
 <script>
@@ -36,12 +40,18 @@ export default {
     const zoomInMarker = (distributor) => {
       emit('zoomInMarker', distributor);
     }
+  
+    const update = (distributor) => {
+      emit('update', distributor)
+      console.log(distributor)
+    }
 
     return {
       showTop,
       removeTop,
       zoomInMarker,
-      toTop
+      toTop,
+      update
     }
   },
 }

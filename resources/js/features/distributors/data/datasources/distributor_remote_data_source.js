@@ -16,4 +16,8 @@ export default class DistributorRemoteDataSource {
   async launchImport() {
     return await this.networkService.get('/import');
   }
+
+  async updateDistributor(id, from){
+    return await this.networkService.put(`/distributors/${id}`, form)
+  }
 }

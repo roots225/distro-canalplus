@@ -35,11 +35,17 @@ __webpack_require__.r(__webpack_exports__);
       emit('zoomInMarker', distributor);
     };
 
+    var update = function update(distributor) {
+      emit('update', distributor);
+      console.log(distributor);
+    };
+
     return {
       showTop: showTop,
       removeTop: removeTop,
       zoomInMarker: zoomInMarker,
-      toTop: toTop
+      toTop: toTop,
+      update: update
     };
   }
 });
@@ -247,13 +253,13 @@ var _hoisted_9 = {
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)("div", {
     "class": "py-3 text-gray-500 border-b relative border-pink-500 cursor-pointer",
-    onMouseout: _cache[1] || (_cache[1] = function ($event) {
+    onMouseout: _cache[2] || (_cache[2] = function ($event) {
       return $setup.removeTop($props.distributor);
     }),
-    onMouseover: _cache[2] || (_cache[2] = function ($event) {
+    onMouseover: _cache[3] || (_cache[3] = function ($event) {
       return $setup.showTop($props.distributor);
     }),
-    onClick: _cache[3] || (_cache[3] = function ($event) {
+    onClick: _cache[4] || (_cache[4] = function ($event) {
       return $setup.zoomInMarker($props.distributor);
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("h4", _hoisted_1, [_hoisted_2, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("span", _hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($props.distributor.distributorNumber), 1
@@ -269,6 +275,15 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       'hidden': $setup.toTop !== $props.distributor.id
     }]
   }, " Cliquer pour zoomer ", 2
+  /* CLASS */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)("div", {
+    onClick: _cache[1] || (_cache[1] = (0,vue__WEBPACK_IMPORTED_MODULE_0__.withModifiers)(function ($event) {
+      return $setup.update($props.distributor);
+    }, ["stop"])),
+    "class": ["py-1 px-8 rounded-2xl bg-gray-400 bg-opacity-25 text-black absolute top-2 right-10 invisible xl:visible", {
+      'hidden': $setup.toTop !== $props.distributor.id
+    }]
+  }, " Modifier ", 2
   /* CLASS */
   )], 32
   /* HYDRATE_EVENTS */
@@ -367,182 +382,6 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
 /***/ }),
 
-/***/ "./resources/js/assets/js/x5-gmaps/x5-gmaps.es.js":
-/*!********************************************************!*\
-  !*** ./resources/js/assets/js/x5-gmaps/x5-gmaps.es.js ***!
-  \********************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
-/* harmony export */   "getMaps": () => (/* binding */ c),
-/* harmony export */   "gmapsCircle": () => (/* binding */ u),
-/* harmony export */   "gmapsMap": () => (/* binding */ _),
-/* harmony export */   "gmapsMarker": () => (/* binding */ g),
-/* harmony export */   "gmapsPolygon": () => (/* binding */ E),
-/* harmony export */   "gmapsPolyline": () => (/* binding */ I),
-/* harmony export */   "gmapsPopup": () => (/* binding */ h),
-/* harmony export */   "gmapsRectangle": () => (/* binding */ P)
-/* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm-bundler.js");
-var e = Object.assign;
-
-var o;
-
-var t = {},
-    n = function n(e, r) {
-  if (!r) return e();
-
-  if (void 0 === o) {
-    var _e = document.createElement("link").relList;
-    o = _e && _e.supports && _e.supports("modulepreload") ? "modulepreload" : "preload";
-  }
-
-  return Promise.all(r.map(function (e) {
-    if (e in t) return;
-    t[e] = !0;
-    var r = e.endsWith(".css"),
-        n = r ? '[rel="stylesheet"]' : "";
-    if (document.querySelector("link[href=\"".concat(e, "\"]").concat(n))) return;
-    var s = document.createElement("link");
-    return s.rel = r ? "stylesheet" : o, r || (s.as = "script", s.crossOrigin = ""), s.href = e, document.head.appendChild(s), r ? new Promise(function (e, r) {
-      s.addEventListener("load", e), s.addEventListener("error", r);
-    }) : void 0;
-  })).then(function () {
-    return e();
-  });
-},
-    s = {
-  KEY_MISSING: function KEY_MISSING() {
-    return i("A Google API 'key' is required for plugin install.");
-  },
-  LIB_ISSUE: function LIB_ISSUE() {
-    return i("Libraries must be an array library names (as strings).");
-  },
-  SCRIPT_LOAD: function SCRIPT_LOAD() {
-    return i("There was an error loading the Google Maps API script.");
-  },
-  TIMEOUT: function TIMEOUT() {
-    return i("Google Maps could not be loaded.");
-  }
-},
-    i = function i(e) {
-  return new Error("x5-gmaps :: ".concat(e));
-};
-
-var a = e({}, s);
-
-var l = function l(e) {
-  return new Promise(function (r, o) {
-    var t = setTimeout(function () {
-      o(a.TIMEOUT());
-    }, 5e3);
-    (function (e) {
-      return new Promise(function (r, o) {
-        var t;
-        var n = document.getElementById("gmaps");
-        n && (null == (t = n.parentNode) || t.removeChild(n)), window._gmapsInit = function () {
-          return r();
-        };
-        var s = document.createElement("script");
-        s.type = "text/javascript", s.defer = !0, s.id = "gmaps", s.src = "https://maps.googleapis.com/maps/api/js?".concat(e, "&callback=_gmapsInit"), s.onerror = function () {
-          return o(a.SCRIPT_LOAD());
-        };
-        var i = document.querySelector("head");
-        null == i || i.appendChild(s);
-      });
-    })(e).then(function () {
-      return r();
-    })["catch"](function (e) {
-      return o(e);
-    })["finally"](function () {
-      return clearTimeout(t);
-    });
-  });
-},
-    p = [],
-    c = function c() {
-  return new Promise(function (e, r) {
-    var o;
-    if (null == (o = window.google) ? void 0 : o.maps) return e(window.google.maps);
-    p.push({
-      resolve: e,
-      reject: r
-    });
-  });
-},
-    d = function d(e) {
-  p.forEach(function (r) {
-    return r.reject(e);
-  });
-},
-    m = function m(e) {
-  var r = function (_ref) {
-    var e = _ref.key,
-        r = _ref.libraries,
-        o = _ref.v,
-        t = _ref.language,
-        n = _ref.region;
-    if (!e) throw a.KEY_MISSING();
-    var s = "key=".concat(e);
-    return r && (s = "".concat(s, "&libraries=").concat(r.join(","))), o && (s = "".concat(s, "&v=").concat(o)), t && (s = "".concat(s, "&language=").concat(t)), n && (s = "".concat(s, "&region=").concat(n)), s;
-  }(e);
-
-  "" !== r && l(r).then(function () {
-    return function () {
-      if (!(null == window ? void 0 : window.google.maps)) return d(a.SCRIPT_LOAD());
-      p.forEach(function (e) {
-        return e.resolve(window.google.maps);
-      });
-    }();
-  })["catch"](function (e) {
-    return d(e);
-  });
-},
-    _ = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Map_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Map.js */ "./resources/js/assets/js/x5-gmaps/Map.js"));
-  }, ["/Map.js", "/debounce.js"]);
-}),
-    u = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Circle_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Circle.js */ "./resources/js/assets/js/x5-gmaps/Circle.js"));
-  }, ["/Circle.js", "/debounce.js"]);
-}),
-    g = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Marker_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Marker.js */ "./resources/js/assets/js/x5-gmaps/Marker.js"));
-  }, ["/Marker.js", "/debounce.js"]);
-}),
-    E = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Polygon_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Polygon.js */ "./resources/js/assets/js/x5-gmaps/Polygon.js"));
-  }, ["/Polygon.js", "/debounce.js"]);
-}),
-    I = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Polyline_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Polyline.js */ "./resources/js/assets/js/x5-gmaps/Polyline.js"));
-  }, ["/Polyline.js", "/debounce.js"]);
-}),
-    h = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Popup_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Popup.js */ "./resources/js/assets/js/x5-gmaps/Popup.js"));
-  }, void 0);
-}),
-    P = (0,vue__WEBPACK_IMPORTED_MODULE_0__.defineAsyncComponent)(function () {
-  return n(function () {
-    return __webpack_require__.e(/*! import() */ "resources_js_assets_js_x5-gmaps_Rectangle_js").then(__webpack_require__.bind(__webpack_require__, /*! ./Rectangle.js */ "./resources/js/assets/js/x5-gmaps/Rectangle.js"));
-  }, ["/Rectangle.js", "/debounce.js"]);
-});
-
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function (e, r) {
-  m(r);
-});
-
-
-/***/ }),
-
 /***/ "./resources/js/helpers/index.js":
 /*!***************************************!*\
   !*** ./resources/js/helpers/index.js ***!
@@ -585,7 +424,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.gmaps-wrapper {\r\n  position: fixed;\r\n  height: calc(100vh - 50%);\r\n  width: 100%;\r\n  bottom: 0;\r\n  z-index: 11\n}\n@media screen and (min-width: 1280px) {\n.gmaps-wrapper {\r\n    position: fixed;\r\n    height: calc(100vh - 55px);\r\n    width: 67%;\r\n    /* top: 54px; */\r\n    bottom: 0;\r\n    z-index: 11\n}\n}\n.gmaps-map {\r\n  height: 100%;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.gmaps-wrapper {\n  position: fixed;\n  height: calc(100vh - 50%);\n  width: 100%;\n  bottom: 0;\n  z-index: 11\n}\n@media screen and (min-width: 1280px) {\n.gmaps-wrapper {\n    position: fixed;\n    height: calc(100vh - 55px);\n    width: 67%;\n    /* top: 54px; */\n    bottom: 0;\n    z-index: 11\n}\n}\n.gmaps-map {\n  height: 100%;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
